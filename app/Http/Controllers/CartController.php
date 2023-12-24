@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\CustomerAddress;
 use App\Models\ProductImage;
+use App\Models\ShippingCharge;
 use Validator;
 
 
@@ -136,7 +137,7 @@ class CartController extends Controller
             return redirect()->route('account.login');
         }
 
-        $customerAddress = CustomerAddress::where('user_id',Auth::user()->id);
+        $customerAddress = CustomerAddress::where('user_id',Auth::user()->id)->first();
 
         session()->forget('url.intended');
 
@@ -304,7 +305,7 @@ class CartController extends Controller
             
             $totalQty = 0;
             foreach(Cart::content() as $item) {
-                $totalQty+= $item->qty;
+                $totalQty += $item->qty;
             }
 
             if($shippingInfo != null) {

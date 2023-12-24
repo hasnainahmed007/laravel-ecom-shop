@@ -12,6 +12,7 @@ use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\ProductSubCategoryController;
 use App\Http\Controllers\admin\ProductImageController;
 use App\Http\Controllers\admin\ShippingController;
+use App\Http\Controllers\admin\DiscountCodeController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
@@ -144,6 +145,12 @@ Route::group(['prefix' => 'admin'],function(){
         Route::put('/shipping/{id}',[ShippingController::class,'update'])->name('shipping.update');
         Route::delete('/shipping/{id}',[ShippingController::class,'destroy'])->name('shipping.delete');
 
+        //Cupons route
+        Route::get('/cupons/create',[DiscountCodeController::class,'create'])->name('cupons.create');
+        // Route::post('/shipping',[ShippingController::class,'store'])->name('shipping.store');
+        // Route::get('/shipping/{id}',[ShippingController::class,'edit'])->name('shipping.edit');
+        // Route::put('/shipping/{id}',[ShippingController::class,'update'])->name('shipping.update');
+        // Route::delete('/shipping/{id}',[ShippingController::class,'destroy'])->name('shipping.delete');
 
 
 
