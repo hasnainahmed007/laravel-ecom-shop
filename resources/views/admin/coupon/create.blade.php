@@ -5,10 +5,10 @@
 					<div class="container-fluid my-2">
 						<div class="row mb-2">
 							<div class="col-sm-6">
-								<h1>Create Cupons</h1>
+								<h1>Create Coupons</h1>
 							</div>
 							<div class="col-sm-6 text-right">
-								<a href="" class="btn btn-primary">Back</a>
+								<a href="{{route('coupons.index')}}" class="btn btn-primary">Back</a>
 							</div>
 						</div>
 					</div>
@@ -18,7 +18,7 @@
 				<section class="content">
 					<!-- Default box -->
 					<div class="container-fluid">
-                        <form action="" method="post" id="cuponForm" enctype="multipart/form-data" name="cuponForm">
+                        <form action="" method="post" id="discountForm" enctype="multipart/form-data" name="discountForm">
                         <div class="card">
 							<div class="card-body">								
 								<div class="row">
@@ -37,12 +37,7 @@
 										</div>
 									</div>
 
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="image">Description</label>
-                                            <textarea  name="description" id="description" class="form-control" placeholder="Description">
-                                         </div>
-                                    </div>
+                                    
 
                                     <div class="col-md-6">
 										<div class="mb-3">
@@ -113,6 +108,13 @@
                                             <p></p>		
 										</div>
 									</div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="image">Description</label>
+                                            <textarea  name="description" id="description" class="form-control" placeholder="Description"></textarea>
+                                         </div>
+                                    </div>
                                    										
 								</div>
 							</div>							
@@ -129,13 +131,27 @@
   
   @section('customJs')
     <script type="text/javascript">
-        $("#categoryForm").submit(function(event){
+
+            $(document).ready(function(){
+                  $('#starts_at').datetimepicker({
+                    // options here
+                    format:'Y-m-d H:i:s',
+                });
+
+                $('#expire_at').datetimepicker({
+                    // options here
+                    format:'Y-m-d H:i:s',
+                });
+            });
+
+
+        $("#discountForm").submit(function(event){
             event.preventDefault();
             var element = $(this);
             $("button[type=submit]").prop('disabled',true);
 
             $.ajax({
-                url: '{{route("categories.store")}}',
+                url: '{{route("coupons.store")}}',
                 type:'post',
                 data: element.serializeArray(),
                 dataType:'json',
@@ -143,39 +159,71 @@
                     $("button[type=submit]").prop('disabled',false);
                     
                     if(response["status"] == true){
-                        window.location.href="{{route('categories.index')}}"
+                        window.location.href="{{route('coupons.index')}}"
 
-                        $("#name").removeClass('is-invalid')
+                        $("#code").removeClass('is-invalid')
                         .siblings('p').removeClass('invalid-feedback')
                         .html("");
 
-                        $("#slug").removeClass('is-invalid')
+                        $("#discount_amount").removeClass('is-invalid')
+                        .siblings('p').removeClass('invalid-feedback')
+                        .html("");
+
+                        $("#starts_at").removeClass('is-invalid')
+                        .siblings('p').removeClass('invalid-feedback')
+                        .html("");
+
+                        $("#expire_at").removeClass('is-invalid')
                         .siblings('p').removeClass('invalid-feedback')
                         .html("");
 
                     } else{
 
                         var errors = response['errors'];
-                    if(errors['name']){
-                        $("#name").addClass('is-invalid')
+                    if(errors['code']){
+                        $("#code").addClass('is-invalid')
                         .siblings('p').addClass('invalid-feedback')
-                        .html(errors['name']);
+                        .html(errors['code']);
                     } else{
                         
-                        $("#name").removeClass('is-invalid')
+                        $("#code").removeClass('is-invalid')
                         .siblings('p').removeClass('invalid-feedback')
                         .html("");
                     
                     }
 
-                    if(errors['slug']){
-                        $("#slug").addClass('is-invalid')
+                    if(errors['discount_amount']){
+                        $("#discount_amount").addClass('is-invalid')
                         .siblings('p').addClass('invalid-feedback')
-                        .html(errors['slug']);
+                        .html(errors['discount_amount']);
                         
                     } else{
 
-                        $("#slug").removeClass('is-invalid')
+                        $("#discount_amount").removeClass('is-invalid')
+                        .siblings('p').removeClass('invalid-feedback')
+                        .html("");
+                    }
+
+                    if(errors['starts_at']){
+                        $("#starts_at").addClass('is-invalid')
+                        .siblings('p').addClass('invalid-feedback')
+                        .html(errors['starts_at']);
+                        
+                    } else{
+
+                        $("#starts_at").removeClass('is-invalid')
+                        .siblings('p').removeClass('invalid-feedback')
+                        .html("");
+                    }
+
+                    if(errors['expire_at']){
+                        $("#expire_at").addClass('is-invalid')
+                        .siblings('p').addClass('invalid-feedback')
+                        .html(errors['expire_at']);
+                        
+                    } else{
+
+                        $("#expire_at").removeClass('is-invalid')
                         .siblings('p').removeClass('invalid-feedback')
                         .html("");
                     }
@@ -190,51 +238,5 @@
             });
         });
 
-
-        $("#name").change(function(){
-
-            element = $(this);
-            $("button[type=submit]").prop('disabled',true);
-        $.ajax({
-                url: '{{ route("getSlug") }}',
-                type:'get',
-                data: {title: element.val()},
-                dataType:'json',
-                success: function(response){
-                    $("button[type=submit]").prop('disabled',false);
-                    if(response["status"] == true){
-                        $("#slug").val(response["slug"]);
-                    }
-                }
-            });
-            });
-
-
-            Dropzone.autoDiscover = false;    
-       const dropzone = $("#image").dropzone({ 
-      init: function() {
-        this.on('addedfile', function(file) {
-            if (this.files.length > 1) {
-                this.removeFile(this.files[0]);
-            }
-        });
-    },
-    url:  "{{ route('temp-images.create') }}",
-    maxFilesize: 2,
-     paramName: 'image',
-    addRemoveLinks: true,
-    // dataType: 'json',
-    acceptedFiles: ".jpeg,.jpg,.png,.gif",
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }, 
-    success: function(file, response){
-       $("#image_id").val(response.image_id);
-         console.log(response);
-     },
-    error: function(file, response){
-        console.log(response);
-    }
-});
     </script>
   @endsection

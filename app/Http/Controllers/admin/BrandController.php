@@ -12,7 +12,7 @@ class BrandController extends Controller
     public function index(Request $request) {
         $brands = Brand::latest('id');
         if($request->get('keyword')){
-            $brands = $brands->where('name','like','%'.$request->keyword.'%');
+            $brands = $brands->where('users.name','like','%'.$request->keyword.'%');
 
         }
         
